@@ -27,6 +27,8 @@ int screenHeight = 240 * 4;
 
 const int numPoints = 30;
 
+float p = 20;
+
 ColourAlusio bgColour{ 0, 0, 0};
 ColourAlusio pntColour{ 0, 0, 255 };
 //ColourAlusio pntColour = ColourAlusio{ 0, 0, 256 };
@@ -129,12 +131,14 @@ public:
 					{
 						closest = points[0];				
 						//closestDst = EuclideanDistance(x , points[0].position.x, y, points[0].position.y);
-						closestDst = ManhattanDistance(x, points[0].position.x, y, points[0].position.y);
+						//closestDst = ManhattanDistance(x, points[0].position.x, y, points[0].position.y);
+						closestDst = MinkowskiDistance(x, points[0].position.x, y, points[0].position.y);
 						first = false;
 					}
 
 					//float distance = EuclideanDistance(x, points[i].position.x, y, points[i].position.y);
-					float distance = ManhattanDistance(x, points[i].position.x, y, points[i].position.y);
+					//float distance = ManhattanDistance(x, points[i].position.x, y, points[i].position.y);
+					float distance = MinkowskiDistance(x, points[i].position.x, y, points[i].position.y);
 
 					if (distance <= closestDst) {
 						closest = points[i];
@@ -149,7 +153,7 @@ public:
 	float EuclideanDistance(int x1, int x2, int y1, int y2)
 	{	
 		float distance = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-		
+
 		return distance;
 	}
 
@@ -159,12 +163,19 @@ public:
 
 		return distance;
 	}
+
+	float MinkowskiDistance(int x1, int x2, int y1, int y2)
+	{
+		float distance = pow(pow(abs(x1 - x2), p) + pow(abs(y1 - y2), p), 1 / p);
+
+		return distance;
+	}
 };
 
 int main()
 {
 	Example demo;
-	if (demo.Construct(screenWidth, screenHeight, 1, 1))
+	if (demo.Construct(screenWidth, screenHeight, 1, 1, false, true))
 		demo.Start();
 	return 0;
 }
